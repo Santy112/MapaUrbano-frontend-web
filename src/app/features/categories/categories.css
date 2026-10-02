@@ -1,0 +1,169 @@
+.categories-container {
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.section-header h2 {
+    margin: 0 0 4px 0;
+    font-size: 1.5rem;
+    color: #0f172a;
+}
+
+.section-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.form-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.form-card h3 {
+    margin: 0 0 16px 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.category-form {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 180px;
+}
+
+.form-group.flex-2 {
+    flex: 2;
+    min-width: 250px;
+}
+
+.form-group.color-group {
+    flex: 0;
+    min-width: 60px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+.form-group input[type="text"] {
+    padding: 9px 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.form-group input[type="text"]:focus {
+    border-color: #2563eb;
+}
+
+.form-group input[type="color"] {
+    height: 38px;
+    width: 50px;
+    padding: 2px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    cursor: pointer;
+}
+
+.btn-primary {
+    padding: 10px 20px;
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    height: 40px;
+    transition: background 0.2s ease;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+}
+
+.categories-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.category-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 18px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.color-badge {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.card-header h4 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #0f172a;
+    flex: 1;
+}
+
+.btn-delete {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.btn-delete:hover {
+    color: #ef4444;
+}
+
+.description {
+    color: #64748b;
+    font-size: 0.88rem;
+    line-height: 1.4;
+    margin: 12px 0 16px 0;
+}
+
+.card-footer {
+    border-top: 1px solid #f1f5f9;
+    padding-top: 10px;
+}
+
+.active-count {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #3b82f6;
+}

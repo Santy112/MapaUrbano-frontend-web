@@ -1,1 +1,116 @@
-<p>reports works!</p>
+<div class="reports-container">
+    <header class="section-header">
+        <div>
+            <h2>Relevamiento de Reclamos e Incidencias</h2>
+            <p>Fichas técnicas de inspección urbana, constancia fotográfica y derivación operativa.</p>
+        </div>
+    </header>
+
+    <!-- Filtros superiores -->
+    <div class="filter-bar">
+        <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" placeholder="Buscar por reclamo, calle o categoría..." [(ngModel)]="busqueda" />
+        </div>
+
+        <div class="status-filters">
+            <button [class.active]="filtroEstado === 'Todos'" (click)="filtroEstado = 'Todos'">Todos ({{ reportes.length
+                }})</button>
+            <button [class.active]="filtroEstado === 'Pendiente'"
+                (click)="filtroEstado = 'Pendiente'">Pendientes</button>
+            <button [class.active]="filtroEstado === 'En proceso'" (click)="filtroEstado = 'En proceso'">En
+                proceso</button>
+            <button [class.active]="filtroEstado === 'Resuelto'" (click)="filtroEstado = 'Resuelto'">Resueltos</button>
+        </div>
+    </div>
+
+    <!-- Grilla de Fichas de Relevamiento Urbano -->
+    <div class="reports-grid">
+        <div class="report-dossier" *ngFor="let rep of reportesFiltrados">
+
+            <!-- Encabezado técnico -->
+            <div class="dossier-top">
+                <span class="dossier-id">ACTA #{{ rep.id }}</span>
+                <span class="dossier-status" [ngClass]="rep.estado.toLowerCase().replace(' ', '-')">
+                    {{ rep.estado }}
+                </span>
+            </div>
+
+            <!-- Evidencia fotográfica en formato cuadrado 1:1 -->
+            <div class="evidence-frame" (click)="verDetalle(rep)">
+                <img [src]="rep.imagenUrl" [alt]="rep.titulo" loading="lazy" />
+                <span class="inspect-label">Ver registro completo</span>
+            </div>
+
+            <!-- Datos técnicos estructurados debajo -->
+            <div class="dossier-content">
+                <h3 class="incident-title" (click)="verDetalle(rep)">{{ rep.titulo }}</h3>
+
+                <div class="technical-table">
+                    <div class="tech-row">
+                        <span class="tech-label">Área:</span>
+                        <span class="tech-value">{{ rep.categoria }}</span>
+                    </div>
+                    <div class="tech-row">
+                        <span class="tech-label">Ubicación:</span>
+                        <span class="tech-value">{{ rep.direccion }}</span>
+                    </div>
+                    <div class="tech-row">
+                        <span class="tech-label">Fecha:</span>
+                        <span class="tech-value">{{ rep.fecha }}</span>
+                    </div>
+                </div>
+
+                <p class="incident-notes">{{ rep.descripcion }}</p>
+
+                <!-- Control de derivación -->
+                <div class="dossier-footer">
+                    <span class="action-desc">Estado operativo:</span>
+                    <select [ngModel]="rep.estado" (ngModelChange)="cambiarEstado(rep, $event)">
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="En proceso">En proceso</option>
+                        <option value="Resuelto">Resuelto</option>
+                    </select>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal pericial ampliado -->
+    <div class="modal-overlay" *ngIf="reporteSeleccionado" (click)="cerrarDetalle()">
+        <div class="modal-box" (click)="$event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <span class="modal-code">EXPEDIENTE N° {{ reporteSeleccionado.id }}</span>
+                    <h3>{{ reporteSeleccionado.titulo }}</h3>
+                </div>
+                <button class="btn-close" (click)="cerrarDetalle()">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="modal-photo-square">
+                    <img [src]="reporteSeleccionado.imagenUrl" [alt]="reporteSeleccionado.titulo" />
+                </div>
+                <div class="modal-details">
+                    <p><strong>Ubicación registrada:</strong> {{ reporteSeleccionado.direccion }}</p>
+                    <p><strong>Área técnica:</strong> {{ reporteSeleccionado.categoria }}</p>
+                    <p><strong>Fecha de relevamiento:</strong> {{ reporteSeleccionado.fecha }}</p>
+                    <p><strong>Estado:</strong>
+                        <span class="dossier-status"
+                            [ngClass]="reporteSeleccionado.estado.toLowerCase().replace(' ', '-')">
+                            {{ reporteSeleccionado.estado }}
+                        </span>
+                    </p>
+                    <div class="report-notes-box">
+                        <strong>Descripción del incidente:</strong>
+                        <p>{{ reporteSeleccionado.descripcion }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

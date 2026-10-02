@@ -1,1 +1,24 @@
-<p>dashboard works!</p>
+<div class="dashboard-wrapper">
+    <header class="dashboard-header">
+        <div class="stat-card">
+            <span class="label">Total Incidencias</span>
+            <span class="value">{{ incidencias.length }}</span>
+        </div>
+        <div class="stat-card">
+            <span class="label">Pendientes</span>
+            <span class="value alert">2</span>
+        </div>
+        <div class="stat-card">
+            <span class="label">En Proceso</span>
+            <span class="value warning">1</span>
+        </div>
+        <div class="stat-card">
+            <span class="label">Resueltas</span>
+            <span class="value success">1</span>
+        </div>
+    </header>
+
+    <section class="map-container">
+        <div id="map"></div>
+    </section>
+</div>

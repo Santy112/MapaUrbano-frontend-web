@@ -1,1 +1,92 @@
-<p>audit works!</p>
+<div class="audit-container">
+    <header class="section-header">
+        <div>
+            <h2>Registro y Trazabilidad de Auditoría</h2>
+            <p>Historial inmutable de operaciones, cambios de estado y modificaciones del sistema.</p>
+        </div>
+        <div class="header-metric">
+            <span class="metric-label">Registros totales</span>
+            <span class="metric-number">{{ logs.length }}</span>
+        </div>
+    </header>
+
+    <!-- Barra de Filtros y Búsqueda -->
+    <div class="filter-bar">
+        <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" placeholder="Buscar por ID, operador o detalle del cambio..." [(ngModel)]="busqueda" />
+        </div>
+
+        <div class="filter-controls">
+            <div class="select-group">
+                <label>Módulo:</label>
+                <select [(ngModel)]="filtroModulo">
+                    <option value="Todos">Todos</option>
+                    <option value="Reportes">Reportes</option>
+                    <option value="Categorías">Categorías</option>
+                    <option value="Mapa">Mapa</option>
+                    <option value="Sistema">Sistema</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label>Acción:</label>
+                <select [(ngModel)]="filtroAccion">
+                    <option value="Todas">Todas</option>
+                    <option value="ESTADO">Estado</option>
+                    <option value="MODIFICAR">Modificación</option>
+                    <option value="CREAR">Creación</option>
+                    <option value="ELIMINAR">Baja</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabla Pericial de Logs -->
+    <div class="table-card">
+        <table class="audit-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Marca Temporal</th>
+                    <th>Operador</th>
+                    <th>Módulo</th>
+                    <th>Acción</th>
+                    <th>Detalle Técnico del Evento</th>
+                    <th>Dirección IP</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of logsFiltrados">
+                    <td class="font-mono log-id">#{{ item.id }}</td>
+                    <td class="time-col">{{ item.timestamp }}</td>
+                    <td>
+                        <div class="user-cell">
+                            <span class="user-name">{{ item.usuario }}</span>
+                            <span class="user-role">{{ item.rol }}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="module-tag">{{ item.modulo }}</span>
+                    </td>
+                    <td>
+                        <span class="action-tag" [ngClass]="item.accion.toLowerCase()">
+                            {{ item.accion }}
+                        </span>
+                    </td>
+                    <td class="desc-cell">{{ item.descripcion }}</td>
+                    <td class="font-mono ip-col">{{ item.ip }}</td>
+                </tr>
+
+                <tr *ngIf="logsFiltrados.length === 0">
+                    <td colspan="7" class="empty-state">
+                        No se encontraron eventos registrados con los criterios seleccionados.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

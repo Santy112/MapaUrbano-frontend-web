@@ -1,1 +1,52 @@
-<p>statistics works!</p>
+<div class="stats-container">
+    <header class="section-header">
+        <div>
+            <h2>Estadísticas de Gestión</h2>
+            <p>Rendimiento operativo municipal y resolución de reclamos vecinales.</p>
+        </div>
+    </header>
+
+    <!-- Métricas Rápidas -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <span class="kpi-label">Efectividad de Resolución</span>
+            <div class="kpi-main">
+                <span class="kpi-val">{{ porcentajeResolucion }}%</span>
+                <span class="kpi-sub success">↑ 4% vs mes anterior</span>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <span class="kpi-label">Tiempo Medio de Respuesta</span>
+            <div class="kpi-main">
+                <span class="kpi-val">{{ tiempoPromedioDias }} <small>días</small></span>
+                <span class="kpi-sub">Por cuadrilla activa</span>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <span class="kpi-label">Total Atendidos</span>
+            <div class="kpi-main">
+                <span class="kpi-val">{{ resueltos + enProceso }}</span>
+                <span class="kpi-sub">de {{ totalReportes }} registrados</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desglose por Categorías -->
+    <div class="breakdown-card">
+        <h3>Distribución de Reclamos por Área</h3>
+        <div class="category-bars">
+            <div class="bar-row" *ngFor="let cat of categorias">
+                <div class="bar-info">
+                    <span class="name">{{ cat.nombre }}</span>
+                    <span class="count">{{ cat.total }} reportes ({{ cat.porcentaje }}%)</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" [style.width.%]="cat.porcentaje" [style.background-color]="cat.color">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

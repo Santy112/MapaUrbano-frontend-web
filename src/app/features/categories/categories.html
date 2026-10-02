@@ -1,1 +1,47 @@
-<p>categories works!</p>
+<div class="categories-container">
+    <header class="section-header">
+        <div>
+            <h2>Categorías de Incidencias</h2>
+            <p>Clasificación de problemáticas urbanas para direccionamiento de cuadrillas.</p>
+        </div>
+    </header>
+
+    <!-- Formulario para agregar nueva categoría -->
+    <div class="form-card">
+        <h3>Nueva Categoría</h3>
+        <form (submit)="agregarCategoria()" class="category-form">
+            <div class="form-group">
+                <label>Nombre</label>
+                <input type="text" placeholder="Ej: Semáforos" [(ngModel)]="nuevaCategoria" name="nombre" required />
+            </div>
+
+            <div class="form-group flex-2">
+                <label>Descripción</label>
+                <input type="text" placeholder="Breve detalle de los reclamos comprendidos..."
+                    [(ngModel)]="nuevaDescripcion" name="descripcion" />
+            </div>
+
+            <div class="form-group color-group">
+                <label>Color</label>
+                <input type="color" [(ngModel)]="nuevoColor" name="color" />
+            </div>
+
+            <button type="submit" class="btn-primary">Agregar</button>
+        </form>
+    </div>
+
+    <!-- Grilla de Categorías -->
+    <div class="categories-grid">
+        <div class="category-card" *ngFor="let cat of categorias">
+            <div class="card-header">
+                <div class="color-badge" [style.background-color]="cat.color"></div>
+                <h4>{{ cat.nombre }}</h4>
+                <button class="btn-delete" (click)="eliminarCategoria(cat.id)" title="Eliminar">✕</button>
+            </div>
+            <p class="description">{{ cat.descripcion }}</p>
+            <div class="card-footer">
+                <span class="active-count">{{ cat.reportesActivos }} reportes activos</span>
+            </div>
+        </div>
+    </div>
+</div>
