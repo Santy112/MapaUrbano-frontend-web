@@ -8,7 +8,7 @@
 }
 
 .section-header h2 {
-    margin: 0 0 4px 0;
+    margin: 0 0 4px;
     font-size: 1.45rem;
     color: #0f172a;
     font-weight: 700;
@@ -21,14 +21,13 @@
     font-size: 0.95rem;
 }
 
-/* Filtros */
 .filter-bar {
     display: flex;
     gap: 16px;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    background: #ffffff;
+    background: #fff;
     padding: 12px 16px;
     border-radius: 8px;
     border: 1px solid #cbd5e1;
@@ -66,7 +65,7 @@
     padding: 6px 12px;
     border-radius: 6px;
     border: 1px solid #cbd5e1;
-    background: #ffffff;
+    background: #fff;
     color: #475569;
     font-size: 0.85rem;
     font-weight: 600;
@@ -76,11 +75,10 @@
 .status-filters button.active,
 .status-filters button:hover {
     background: #1e293b;
-    color: #ffffff;
+    color: #fff;
     border-color: #1e293b;
 }
 
-/* Grilla de Expedientes */
 .reports-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
@@ -88,7 +86,7 @@
 }
 
 .report-dossier {
-    background: #ffffff;
+    background: #fff;
     border-radius: 8px;
     border: 1px solid #cbd5e1;
     display: flex;
@@ -110,10 +108,8 @@
     font-size: 0.8rem;
     font-weight: 700;
     color: #334155;
-    letter-spacing: 0.05em;
 }
 
-/* Marco estrictamente cuadrado 1:1 para la evidencia */
 .evidence-frame {
     position: relative;
     width: 100%;
@@ -145,7 +141,6 @@
     pointer-events: none;
 }
 
-/* Bloque descriptivo abajo */
 .dossier-content {
     padding: 16px;
     display: flex;
@@ -154,7 +149,7 @@
 }
 
 .incident-title {
-    margin: 0 0 12px 0;
+    margin: 0 0 12px;
     font-size: 1.05rem;
     color: #0f172a;
     font-weight: 600;
@@ -195,14 +190,13 @@
 }
 
 .incident-notes {
-    margin: 0 0 16px 0;
+    margin: 0 0 16px;
     font-size: 0.86rem;
     color: #475569;
     line-height: 1.45;
     flex: 1;
 }
 
-/* Footer operativo */
 .dossier-footer {
     border-top: 1px solid #e2e8f0;
     padding-top: 12px;
@@ -221,14 +215,13 @@
     padding: 5px 8px;
     border-radius: 6px;
     border: 1px solid #cbd5e1;
-    background-color: #ffffff;
+    background-color: #fff;
     font-size: 0.82rem;
     color: #0f172a;
     font-weight: 600;
     cursor: pointer;
 }
 
-/* Indicadores */
 .dossier-status {
     padding: 2px 8px;
     border-radius: 4px;
@@ -252,7 +245,6 @@
     color: #166534;
 }
 
-/* Modal */
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -265,7 +257,7 @@
 }
 
 .modal-box {
-    background: #ffffff;
+    background: #fff;
     border-radius: 8px;
     width: 100%;
     max-width: 580px;
@@ -290,7 +282,7 @@
 }
 
 .modal-header h3 {
-    margin: 4px 0 0 0;
+    margin: 4px 0 0;
     font-size: 1.15rem;
     color: #0f172a;
 }
@@ -325,7 +317,7 @@
 }
 
 .modal-details p {
-    margin: 0 0 6px 0;
+    margin: 0 0 6px;
     font-size: 0.88rem;
     color: #334155;
 }
@@ -340,6 +332,6 @@
 }
 
 .report-notes-box p {
-    margin: 4px 0 0 0;
+    margin: 4px 0 0;
     color: #475569;
 }

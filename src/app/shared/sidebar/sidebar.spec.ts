@@ -1,21 +1,18 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { Sidebar } from './sidebar';
 
 describe('Sidebar', () => {
-  let component: Sidebar;
-  let fixture: ComponentFixture<Sidebar>;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [Sidebar],
+      providers: [provideRouter([])]
     }).compileComponents();
-
-    fixture = TestBed.createComponent(Sidebar);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
   });
 
-  it('should create', () => {
+  it('should create the sidebar', () => {
+    const fixture = TestBed.createComponent(Sidebar);
+    const component = fixture.componentInstance;
     expect(component).toBeTruthy();
   });
 });

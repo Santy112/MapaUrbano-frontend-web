@@ -10,5 +10,5 @@ import { Sidebar } from './shared/sidebar/sidebar';
   styleUrl: './app.css'
 })
 export class App {
-  title = 'mapa-urbano';
+  title = 'Mapa Urbano';
 }
