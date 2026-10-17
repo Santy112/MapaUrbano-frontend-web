@@ -1,5 +1,5 @@
-<div class="layout-container">
-  <app-sidebar></app-sidebar>
+<div class="layout-container" [class.no-sidebar]="isLoginRoute">
+  <app-sidebar *ngIf="!isLoginRoute"></app-sidebar>
   <main class="main-content">
     <router-outlet></router-outlet>
   </main>

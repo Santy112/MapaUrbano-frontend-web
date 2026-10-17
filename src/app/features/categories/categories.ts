@@ -1,52 +1,75 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-export interface Categoria {
-  id: number;
-  nombre: string;
-  descripcion: string;
-  reportesActivos: number;
-  color: string;
-}
+import { AdminCategoriesService } from '../../core/services/admin-categories.service';
+import { AdminCategory } from '../../core/models/api.models';
 
 @Component({
   selector: 'app-categories',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './categories.html',
-  styleUrl: './categories.css',
+  styleUrl: './categories.css'
 })
-export class Categories {
-  nuevaCategoria: string = '';
-  nuevaDescripcion: string = '';
-  nuevoColor: string = '#2563eb';
+export class Categories implements OnInit {
+  nuevaCategoria = {
+    name: '',
+    slug: '',
+    colorHex: '#2563eb',
+    displayOrder: 1,
+    isActive: true
+  };
 
-  categorias: Categoria[] = [
-    { id: 1, nombre: 'Vialidad', descripcion: 'Baches, calzadas deterioradas, señalética y reductores de velocidad', reportesActivos: 14, color: '#ef4444' },
-    { id: 2, nombre: 'Alumbrado', descripcion: 'Farolas apagadas, focos intermitentes y cableado aéreo', reportesActivos: 8, color: '#f59e0b' },
-    { id: 3, nombre: 'Arbolado', descripcion: 'Poda de ramas bajas, árboles secos y despeje de tendido', reportesActivos: 5, color: '#10b981' },
-    { id: 4, nombre: 'Higiene Urbana', descripcion: 'Microbasurales, contenedores rotos y limpieza de acequias', reportesActivos: 11, color: '#06b6d4' },
-    { id: 5, nombre: 'Obras y Agua', descripcion: 'Pérdidas de agua en vía pública y roturas de vereda', reportesActivos: 6, color: '#8b5cf6' }
-  ];
+  errorMensaje = '';
 
-  agregarCategoria(): void {
-    if (!this.nuevaCategoria.trim()) return;
+  constructor(public categoriesService: AdminCategoriesService) { }
 
-    this.categorias.push({
-      id: Date.now(),
-      nombre: this.nuevaCategoria.trim(),
-      descripcion: this.nuevaDescripcion.trim() || 'Sin descripción adicional',
-      reportesActivos: 0,
-      color: this.nuevoColor
-    });
-
-    this.nuevaCategoria = '';
-    this.nuevaDescripcion = '';
-    this.nuevoColor = '#2563eb';
+  ngOnInit(): void {
+    this.categoriesService.getCategories().subscribe();
   }
 
-  eliminarCategoria(id: number): void {
-    this.categorias = this.categorias.filter(cat => cat.id !== id);
+  generarSlug(): void {
+    this.nuevaCategoria.slug = this.nuevaCategoria.name
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  }
+
+  crearCategoria(): void {
+    if (!this.nuevaCategoria.name.trim() || !this.nuevaCategoria.slug.trim()) {
+      this.errorMensaje = 'El nombre y el slug técnico son obligatorios.';
+      return;
+    }
+
+    const existeSlug = this.categoriesService.categories().some(c => c.slug === this.nuevaCategoria.slug);
+    if (existeSlug) {
+      this.errorMensaje = `Ya existe una categoría con el slug "${this.nuevaCategoria.slug}".`;
+      return;
+    }
+
+    this.errorMensaje = '';
+    this.categoriesService.createCategory({
+      name: this.nuevaCategoria.name,
+      slug: this.nuevaCategoria.slug,
+      colorHex: this.nuevaCategoria.colorHex,
+      displayOrder: Number(this.nuevaCategoria.displayOrder),
+      isActive: this.nuevaCategoria.isActive
+    }).subscribe(() => {
+      this.nuevaCategoria = {
+        name: '',
+        slug: '',
+        colorHex: '#2563eb',
+        displayOrder: this.categoriesService.categories().length + 1,
+        isActive: true
+      };
+    });
+  }
+
+  toggleEstado(cat: AdminCategory): void {
+    this.categoriesService.toggleActive(cat.id, cat.isActive).subscribe();
   }
 }

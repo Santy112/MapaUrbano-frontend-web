@@ -1,47 +1,95 @@
 <div class="categories-container">
     <header class="section-header">
         <div>
-            <h2>Categorías de Incidencias</h2>
-            <p>Clasificación de problemáticas urbanas para direccionamiento de cuadrillas.</p>
+            <h2>Áreas Técnicas y Categorías Urbanas</h2>
+            <p>Administración de nomenclaturas, slugs normalizados y asignación cromática para reportes.</p>
         </div>
     </header>
 
-    <!-- Formulario para agregar nueva categoría -->
-    <div class="form-card">
-        <h3>Nueva Categoría</h3>
-        <form (submit)="agregarCategoria()" class="category-form">
-            <div class="form-group">
-                <label>Nombre</label>
-                <input type="text" placeholder="Ej: Semáforos" [(ngModel)]="nuevaCategoria" name="nombre" required />
+    <div class="categories-layout">
+        <!-- Panel de Alta Técnica -->
+        <div class="form-card">
+            <h3>Nueva Categoría Operativa</h3>
+
+            <div class="alert-error" *ngIf="errorMensaje">
+                {{ errorMensaje }}
             </div>
 
-            <div class="form-group flex-2">
-                <label>Descripción</label>
-                <input type="text" placeholder="Breve detalle de los reclamos comprendidos..."
-                    [(ngModel)]="nuevaDescripcion" name="descripcion" />
+            <form (ngSubmit)="crearCategoria()" class="category-form">
+                <div class="form-group">
+                    <label for="cat-name">Nombre de Área</label>
+                    <input id="cat-name" type="text" [(ngModel)]="nuevaCategoria.name" name="name"
+                        (input)="generarSlug()" placeholder="Ej: Desagües Pluviales" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="cat-slug">Identificador Técnico (Slug)</label>
+                    <input id="cat-slug" type="text" [(ngModel)]="nuevaCategoria.slug" name="slug"
+                        placeholder="ej: desagues-pluviales" required />
+                    <small class="field-hint">Se utiliza como clave única de integración en la API.</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group color-group">
+                        <label for="cat-color">Color</label>
+                        <div class="color-picker-wrapper">
+                            <input id="cat-color" type="color" [(ngModel)]="nuevaCategoria.colorHex" name="colorHex" />
+                            <span class="color-val">{{ nuevaCategoria.colorHex }}</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group order-group">
+                        <label for="cat-order">Orden</label>
+                        <input id="cat-order" type="number" min="1" [(ngModel)]="nuevaCategoria.displayOrder"
+                            name="displayOrder" />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-create">Registrar Categoría</button>
+            </form>
+        </div>
+
+        <!-- Listado Pericial de Categorías -->
+        <div class="table-card">
+            <div class="table-top">
+                <h3>Categorías Vigentes ({{ categoriesService.categories().length }})</h3>
             </div>
 
-            <div class="form-group color-group">
-                <label>Color</label>
-                <input type="color" [(ngModel)]="nuevoColor" name="color" />
-            </div>
-
-            <button type="submit" class="btn-primary">Agregar</button>
-        </form>
-    </div>
-
-    <!-- Grilla de Categorías -->
-    <div class="categories-grid">
-        <div class="category-card" *ngFor="let cat of categorias">
-            <div class="card-header">
-                <div class="color-badge" [style.background-color]="cat.color"></div>
-                <h4>{{ cat.nombre }}</h4>
-                <button class="btn-delete" (click)="eliminarCategoria(cat.id)" title="Eliminar">✕</button>
-            </div>
-            <p class="description">{{ cat.descripcion }}</p>
-            <div class="card-footer">
-                <span class="active-count">{{ cat.reportesActivos }} reportes activos</span>
-            </div>
+            <table class="categories-table">
+                <thead>
+                    <tr>
+                        <th>Color</th>
+                        <th>Área / Denominación</th>
+                        <th>Slug API</th>
+                        <th>UUID</th>
+                        <th>Orden</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let cat of categoriesService.categories()">
+                        <td>
+                            <span class="color-chip" [style.backgroundColor]="cat.colorHex"></span>
+                        </td>
+                        <td class="font-bold">{{ cat.name }}</td>
+                        <td class="font-mono text-muted">{{ cat.slug }}</td>
+                        <td class="font-mono text-uuid" [title]="cat.id">{{ cat.id.substring(0, 8) }}...</td>
+                        <td>#{{ cat.displayOrder }}</td>
+                        <td>
+                            <span class="status-pill" [class.active]="cat.isActive" [class.inactive]="!cat.isActive">
+                                {{ cat.isActive ? 'Activa' : 'Inactiva' }}
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn-toggle" [class.btn-deactivate]="cat.isActive"
+                                [class.btn-activate]="!cat.isActive" (click)="toggleEstado(cat)">
+                                {{ cat.isActive ? 'Desactivar' : 'Activar' }}
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

@@ -1,16 +1,39 @@
 import { Routes } from '@angular/router';
-import { Dashboard } from './features/dashboard/dashboard';
-import { Reports } from './features/reports/reports';
-import { Categories } from './features/categories/categories';
-import { Statistics } from './features/statistics/statistics';
-import { Audit } from './features/audit/audit';
+import { adminAuthGuard } from './core/guards/admin-auth.guard';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-    { path: 'dashboard', component: Dashboard },
-    { path: 'reports', component: Reports },
-    { path: 'categories', component: Categories },
-    { path: 'statistics', component: Statistics },
-    { path: 'audit', component: Audit },
-    { path: '**', redirectTo: 'dashboard' }
+    {
+        path: 'login',
+        loadComponent: () => import('./features/login/login').then(m => m.Login)
+    },
+    {
+        path: '',
+        canActivate: [adminAuthGuard],
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('./features/dashboard/dashboard').then(m => m.Dashboard)
+            },
+            {
+                path: 'reports',
+                loadComponent: () => import('./features/reports/reports').then(m => m.Reports)
+            },
+            {
+                path: 'categories',
+                loadComponent: () => import('./features/categories/categories').then(m => m.Categories)
+            },
+            {
+                path: 'statistics',
+                loadComponent: () => import('./features/statistics/statistics').then(m => m.Statistics)
+            },
+            {
+                path: 'audit',
+                loadComponent: () => import('./features/audit/audit').then(m => m.Audit)
+            }
+        ]
+    },
+    {
+        path: '**',
+        redirectTo: ''
+    }
 ];

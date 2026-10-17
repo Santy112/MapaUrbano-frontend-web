@@ -1,49 +1,95 @@
 <div class="stats-container">
     <header class="section-header">
         <div>
-            <h2>Estadísticas de Gestión</h2>
-            <p>Rendimiento operativo municipal y resolución de reclamos vecinales.</p>
+            <h2>Métricas e Indicadores de Gestión</h2>
+            <p>Rendimiento operativo, distribución por criticidad y resolución de reclamos urbanos.</p>
         </div>
     </header>
 
-    <!-- Métricas Rápidas -->
-    <div class="kpi-grid">
-        <div class="kpi-card">
-            <span class="kpi-label">Efectividad de Resolución</span>
-            <div class="kpi-main">
-                <span class="kpi-val">{{ porcentajeResolucion }}%</span>
-                <span class="kpi-sub success">↑ 4% vs mes anterior</span>
-            </div>
-        </div>
-
-        <div class="kpi-card">
-            <span class="kpi-label">Tiempo Medio de Respuesta</span>
-            <div class="kpi-main">
-                <span class="kpi-val">{{ tiempoPromedioDias }} <small>días</small></span>
-                <span class="kpi-sub">Por cuadrilla activa</span>
-            </div>
-        </div>
-
-        <div class="kpi-card">
-            <span class="kpi-label">Total Atendidos</span>
-            <div class="kpi-main">
-                <span class="kpi-val">{{ resueltos + enProceso }}</span>
-                <span class="kpi-sub">de {{ totalReportes }} registrados</span>
-            </div>
-        </div>
+    <div class="loading-state" *ngIf="statsService.isLoading()">
+        <p>Cargando estadísticas del sistema...</p>
     </div>
 
-    <!-- Desglose por Categorías -->
-    <div class="breakdown-card">
-        <h3>Distribución de Reclamos por Área</h3>
-        <div class="category-bars">
-            <div class="bar-row" *ngFor="let cat of categorias">
-                <div class="bar-info">
-                    <span class="name">{{ cat.nombre }}</span>
-                    <span class="count">{{ cat.total }} reportes ({{ cat.porcentaje }}%)</span>
+    <div *ngIf="statsService.stats() as stats">
+        <!-- Métricas principales -->
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <span class="card-label">Total de Reclamos</span>
+                <span class="card-value">{{ stats.totalReports }}</span>
+                <span class="card-hint">Expedientes ingresados</span>
+            </div>
+
+            <div class="metric-card pending">
+                <span class="card-label">Pendientes</span>
+                <span class="card-value">{{ stats.byStatus.pending }}</span>
+                <span class="card-hint">Requieren asignación</span>
+            </div>
+
+            <div class="metric-card in-progress">
+                <span class="card-label">En Proceso</span>
+                <span class="card-value">{{ stats.byStatus.inProgress }}</span>
+                <span class="card-hint">Con cuadrilla en territorio</span>
+            </div>
+
+            <div class="metric-card resolved">
+                <span class="card-label">Resueltos</span>
+                <span class="card-value">{{ stats.byStatus.resolved }}</span>
+                <span class="card-hint">Inspección finalizada</span>
+            </div>
+        </div>
+
+        <!-- Gráficos de barras nativos y distribución -->
+        <div class="details-grid">
+            <div class="panel-card">
+                <h3>Distribución por Nivel de Criticidad</h3>
+                <div class="distribution-list">
+                    <div class="dist-row">
+                        <span class="dist-name">Crítica</span>
+                        <div class="bar-track">
+                            <div class="bar-fill critical"
+                                [style.width.%]="(stats.byPriority.critical / stats.totalReports) * 100"></div>
+                        </div>
+                        <span class="dist-count">{{ stats.byPriority.critical }}</span>
+                    </div>
+
+                    <div class="dist-row">
+                        <span class="dist-name">Alta</span>
+                        <div class="bar-track">
+                            <div class="bar-fill high"
+                                [style.width.%]="(stats.byPriority.high / stats.totalReports) * 100"></div>
+                        </div>
+                        <span class="dist-count">{{ stats.byPriority.high }}</span>
+                    </div>
+
+                    <div class="dist-row">
+                        <span class="dist-name">Media</span>
+                        <div class="bar-track">
+                            <div class="bar-fill medium"
+                                [style.width.%]="(stats.byPriority.medium / stats.totalReports) * 100"></div>
+                        </div>
+                        <span class="dist-count">{{ stats.byPriority.medium }}</span>
+                    </div>
+
+                    <div class="dist-row">
+                        <span class="dist-name">Baja</span>
+                        <div class="bar-track">
+                            <div class="bar-fill low"
+                                [style.width.%]="(stats.byPriority.low / stats.totalReports) * 100"></div>
+                        </div>
+                        <span class="dist-count">{{ stats.byPriority.low }}</span>
+                    </div>
                 </div>
-                <div class="progress-track">
-                    <div class="progress-fill" [style.width.%]="cat.porcentaje" [style.background-color]="cat.color">
+            </div>
+
+            <div class="panel-card">
+                <h3>Incidencia por Área de Servicio</h3>
+                <div class="distribution-list">
+                    <div class="dist-row" *ngFor="let cat of stats.byCategory">
+                        <span class="dist-name">{{ cat.name }}</span>
+                        <div class="bar-track">
+                            <div class="bar-fill default" [style.width.%]="cat.percentage"></div>
+                        </div>
+                        <span class="dist-count">{{ cat.count }} ({{ cat.percentage }}%)</span>
                     </div>
                 </div>
             </div>

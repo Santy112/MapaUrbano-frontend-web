@@ -6,6 +6,16 @@
         </div>
     </header>
 
+    <!-- Banner de error o conflicto de concurrencia (HTTP 409) -->
+    <div class="alert-conflict" *ngIf="conflictError">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>{{ conflictError }}</span>
+    </div>
+
     <!-- Filtros superiores -->
     <div class="filter-bar">
         <div class="search-box">
@@ -13,70 +23,83 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input type="text" placeholder="Buscar por reclamo, calle o categoría..." [(ngModel)]="busqueda" />
+            <input type="text" placeholder="Buscar por reclamo, calle o categoría..." [(ngModel)]="busqueda"
+                (keyup.enter)="onBuscar()" />
         </div>
 
         <div class="status-filters">
-            <button [class.active]="filtroEstado === 'Todos'" (click)="filtroEstado = 'Todos'">Todos ({{ reportes.length
-                }})</button>
-            <button [class.active]="filtroEstado === 'Pendiente'"
-                (click)="filtroEstado = 'Pendiente'">Pendientes</button>
-            <button [class.active]="filtroEstado === 'En proceso'" (click)="filtroEstado = 'En proceso'">En
+            <button [class.active]="filtroEstado === 'Todos'" (click)="onFiltroEstadoChange('Todos')">Todos ({{
+                reportsService.totalReports() }})</button>
+            <button [class.active]="filtroEstado === 'PENDING'"
+                (click)="onFiltroEstadoChange('PENDING')">Pendientes</button>
+            <button [class.active]="filtroEstado === 'IN_PROGRESS'" (click)="onFiltroEstadoChange('IN_PROGRESS')">En
                 proceso</button>
-            <button [class.active]="filtroEstado === 'Resuelto'" (click)="filtroEstado = 'Resuelto'">Resueltos</button>
+            <button [class.active]="filtroEstado === 'RESOLVED'"
+                (click)="onFiltroEstadoChange('RESOLVED')">Resueltos</button>
         </div>
     </div>
 
+    <!-- Estado de carga -->
+    <div class="state-indicator" *ngIf="reportsService.isLoading()">
+        <p>Consultando registros periciales en el servidor...</p>
+    </div>
+
     <!-- Grilla de Fichas de Relevamiento Urbano -->
-    <div class="reports-grid">
-        <div class="report-dossier" *ngFor="let rep of reportesFiltrados">
+    <div class="reports-grid" *ngIf="!reportsService.isLoading()">
+        <div class="report-dossier" *ngFor="let rep of reportsService.reports()">
 
             <!-- Encabezado técnico -->
             <div class="dossier-top">
-                <span class="dossier-id">ACTA #{{ rep.id }}</span>
-                <span class="dossier-status" [ngClass]="rep.estado.toLowerCase().replace(' ', '-')">
-                    {{ rep.estado }}
+                <span class="dossier-id">ACTA #{{ rep.id }} &bull; v{{ rep.version }}</span>
+                <span class="dossier-status" [ngClass]="rep.status.toLowerCase().replace('_', '-')">
+                    {{ rep.status }}
                 </span>
             </div>
 
             <!-- Evidencia fotográfica en formato cuadrado 1:1 -->
             <div class="evidence-frame" (click)="verDetalle(rep)">
-                <img [src]="rep.imagenUrl" [alt]="rep.titulo" loading="lazy" />
+                <img [src]="rep.imageUrl || '/bache.jpg'" [alt]="rep.title" loading="lazy" />
                 <span class="inspect-label">Ver registro completo</span>
             </div>
 
             <!-- Datos técnicos estructurados debajo -->
             <div class="dossier-content">
-                <h3 class="incident-title" (click)="verDetalle(rep)">{{ rep.titulo }}</h3>
+                <h3 class="incident-title" (click)="verDetalle(rep)">{{ rep.title }}</h3>
 
                 <div class="technical-table">
                     <div class="tech-row">
                         <span class="tech-label">Área:</span>
-                        <span class="tech-value">{{ rep.categoria }}</span>
+                        <span class="tech-value">{{ rep.categorySlug }}</span>
+                    </div>
+                    <div class="tech-row">
+                        <span class="tech-label">Prioridad:</span>
+                        <span class="tech-value">{{ rep.priority }}</span>
                     </div>
                     <div class="tech-row">
                         <span class="tech-label">Ubicación:</span>
-                        <span class="tech-value">{{ rep.direccion }}</span>
-                    </div>
-                    <div class="tech-row">
-                        <span class="tech-label">Fecha:</span>
-                        <span class="tech-value">{{ rep.fecha }}</span>
+                        <span class="tech-value">{{ rep.address || (rep.latitude + ', ' + rep.longitude) }}</span>
                     </div>
                 </div>
 
-                <p class="incident-notes">{{ rep.descripcion }}</p>
+                <p class="incident-notes">{{ rep.description }}</p>
 
-                <!-- Control de derivación -->
+                <!-- Control de derivación y cambio de estado -->
                 <div class="dossier-footer">
                     <span class="action-desc">Estado operativo:</span>
-                    <select [ngModel]="rep.estado" (ngModelChange)="cambiarEstado(rep, $event)">
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="En proceso">En proceso</option>
-                        <option value="Resuelto">Resuelto</option>
+                    <select [ngModel]="rep.status" (ngModelChange)="cambiarEstado(rep, $event)">
+                        <option value="PENDING">PENDING</option>
+                        <option value="IN_PROGRESS">IN_PROGRESS</option>
+                        <option value="RESOLVED">RESOLVED</option>
+                        <option value="REJECTED">REJECTED</option>
                     </select>
                 </div>
             </div>
 
+        </div>
+
+        <!-- Estado vacío -->
+        <div class="empty-dossier" *ngIf="reportsService.reports().length === 0">
+            <p>No se encontraron actas con los filtros especificados.</p>
         </div>
     </div>
 
@@ -85,29 +108,32 @@
         <div class="modal-box" (click)="$event.stopPropagation()">
             <div class="modal-header">
                 <div>
-                    <span class="modal-code">EXPEDIENTE N° {{ reporteSeleccionado.id }}</span>
-                    <h3>{{ reporteSeleccionado.titulo }}</h3>
+                    <span class="modal-code">EXPEDIENTE N° {{ reporteSeleccionado.id }} (v{{ reporteSeleccionado.version
+                        }})</span>
+                    <h3>{{ reporteSeleccionado.title }}</h3>
                 </div>
                 <button class="btn-close" (click)="cerrarDetalle()">✕</button>
             </div>
 
             <div class="modal-body">
                 <div class="modal-photo-square">
-                    <img [src]="reporteSeleccionado.imagenUrl" [alt]="reporteSeleccionado.titulo" />
+                    <img [src]="reporteSeleccionado.imageUrl || '/bache.jpg'" [alt]="reporteSeleccionado.title" />
                 </div>
                 <div class="modal-details">
-                    <p><strong>Ubicación registrada:</strong> {{ reporteSeleccionado.direccion }}</p>
-                    <p><strong>Área técnica:</strong> {{ reporteSeleccionado.categoria }}</p>
-                    <p><strong>Fecha de relevamiento:</strong> {{ reporteSeleccionado.fecha }}</p>
+                    <p><strong>Ubicación:</strong> {{ reporteSeleccionado.address || (reporteSeleccionado.latitude + ',
+                        ' + reporteSeleccionado.longitude) }}</p>
+                    <p><strong>Área técnica:</strong> {{ reporteSeleccionado.categorySlug }}</p>
+                    <p><strong>Prioridad:</strong> {{ reporteSeleccionado.priority }}</p>
+                    <p><strong>Fecha de alta:</strong> {{ reporteSeleccionado.createdAt }}</p>
                     <p><strong>Estado:</strong>
                         <span class="dossier-status"
-                            [ngClass]="reporteSeleccionado.estado.toLowerCase().replace(' ', '-')">
-                            {{ reporteSeleccionado.estado }}
+                            [ngClass]="reporteSeleccionado.status.toLowerCase().replace('_', '-')">
+                            {{ reporteSeleccionado.status }}
                         </span>
                     </p>
                     <div class="report-notes-box">
-                        <strong>Descripción del incidente:</strong>
-                        <p>{{ reporteSeleccionado.descripcion }}</p>
+                        <strong>Descripción pericial:</strong>
+                        <p>{{ reporteSeleccionado.description }}</p>
                     </div>
                 </div>
             </div>

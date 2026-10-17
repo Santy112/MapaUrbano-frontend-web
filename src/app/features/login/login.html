@@ -1,0 +1,36 @@
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="login-header">
+            <div class="logo-badge">MU</div>
+            <h2>Mapa Urbano</h2>
+            <p class="subtitle">Acceso Administrativo y Operativo</p>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" class="login-form">
+            <div class="form-group">
+                <label for="username">Usuario u Operador</label>
+                <input id="username" type="text" name="username" [(ngModel)]="username" placeholder="Ej: s.zuleta"
+                    autocomplete="username" required />
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <input id="password" type="password" name="password" [(ngModel)]="password" placeholder="••••••••"
+                    autocomplete="current-password" required />
+            </div>
+
+            <div class="alert-error" *ngIf="errorMessage">
+                {{ errorMessage }}
+            </div>
+
+            <button type="submit" class="btn-submit" [disabled]="isSubmitting">
+                <span *ngIf="!isSubmitting">Iniciar Sesión</span>
+                <span *ngIf="isSubmitting">Verificando credenciales...</span>
+            </button>
+        </form>
+
+        <div class="login-footer">
+            <small>Sistema de gestión municipal &bull; Sesión protegida por cookie</small>
+        </div>
+    </div>
+</div>

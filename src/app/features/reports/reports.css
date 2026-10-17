@@ -335,3 +335,38 @@
     margin: 4px 0 0;
     color: #475569;
 }
+
+.alert-conflict {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #fee2e2;
+    border: 1px solid #f87171;
+    color: #991b1b;
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: .85rem
+}
+
+.alert-conflict svg {
+    width: 18px;
+    height: 18px;
+    stroke: #991b1b;
+    flex-shrink: 0
+}
+
+.state-indicator,
+.empty-dossier {
+    text-align: center;
+    padding: 40px 20px;
+    color: #64748b;
+    font-style: italic;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1
+}
+
+.dossier-status.rejected {
+    background: #e2e8f0;
+    color: #475569
+}
