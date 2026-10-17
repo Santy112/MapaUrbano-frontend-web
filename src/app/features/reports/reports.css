@@ -370,3 +370,32 @@
     background: #e2e8f0;
     color: #475569
 }
+
+.select-team {
+    margin-left: 8px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    font-size: .82rem
+}
+
+.modal-actions-footer {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end
+}
+
+.btn-delete {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: .82rem;
+    font-weight: 600;
+    cursor: pointer
+}
+
+.btn-delete:hover {
+    background: #fecaca
+}

@@ -122,21 +122,3 @@
                 <div class="modal-details">
                     <p><strong>Ubicación:</strong> {{ reporteSeleccionado.address || (reporteSeleccionado.latitude + ',
                         ' + reporteSeleccionado.longitude) }}</p>
-                    <p><strong>Área técnica:</strong> {{ reporteSeleccionado.categorySlug }}</p>
-                    <p><strong>Prioridad:</strong> {{ reporteSeleccionado.priority }}</p>
-                    <p><strong>Fecha de alta:</strong> {{ reporteSeleccionado.createdAt }}</p>
-                    <p><strong>Estado:</strong>
-                        <span class="dossier-status"
-                            [ngClass]="reporteSeleccionado.status.toLowerCase().replace('_', '-')">
-                            {{ reporteSeleccionado.status }}
-                        </span>
-                    </p>
-                    <div class="report-notes-box">
-                        <strong>Descripción pericial:</strong>
-                        <p>{{ reporteSeleccionado.description }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>

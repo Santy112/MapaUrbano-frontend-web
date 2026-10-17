@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminReportsService } from '../../core/services/admin-reports.service';
+import { AdminTeamsService } from '../../core/services/admin-teams.service';
 import { AdminReport, ReportStatus } from '../../core/models/api.models';
 
 @Component({
@@ -17,10 +18,14 @@ export class Reports implements OnInit {
   reporteSeleccionado: AdminReport | null = null;
   conflictError: string | null = null;
 
-  constructor(public reportsService: AdminReportsService) { }
+  constructor(
+    public reportsService: AdminReportsService,
+    public teamsService: AdminTeamsService
+  ) { }
 
   ngOnInit(): void {
     this.cargarReportes();
+    this.teamsService.getTeams().subscribe();
   }
 
   cargarReportes(): void {
@@ -54,6 +59,20 @@ export class Reports implements OnInit {
         }
       }
     });
+  }
+
+  asignarEquipo(reporte: AdminReport, teamId: string): void {
+    reporte.assignedTeamId = teamId;
+  }
+
+  eliminarReporte(id: number): void {
+    if (confirm(`¿Confirma la anulación/baja del Acta #${id}? Esta acción no se puede deshacer.`)) {
+      this.reportsService.deleteReport(id).subscribe(() => {
+        if (this.reporteSeleccionado?.id === id) {
+          this.cerrarDetalle();
+        }
+      });
+    }
   }
 
   verDetalle(reporte: AdminReport): void {
