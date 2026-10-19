@@ -53,8 +53,8 @@ export class Reports implements OnInit {
         reporte.version = actualizado.version;
       },
       error: (err) => {
-        if (err.message === 'CONFLICT_409') {
-          this.conflictError = `Conflicto en Acta #${reporte.id}: otro operador modificó el expediente. Recargando datos...`;
+        if (err.status === 409) {
+          this.conflictError = `Conflicto en Acta: otro operador modificó el expediente. Recargando datos...`;
           this.cargarReportes();
         }
       }
@@ -65,8 +65,8 @@ export class Reports implements OnInit {
     reporte.assignedTeamId = teamId;
   }
 
-  eliminarReporte(id: number): void {
-    if (confirm(`¿Confirma la anulación/baja del Acta #${id}? Esta acción no se puede deshacer.`)) {
+  eliminarReporte(id: string): void {
+    if (confirm(`¿Confirma la anulación/baja del Acta? Esta acción no se puede deshacer.`)) {
       this.reportsService.deleteReport(id).subscribe(() => {
         if (this.reporteSeleccionado?.id === id) {
           this.cerrarDetalle();

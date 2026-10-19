@@ -7,7 +7,6 @@
     </header>
 
     <div class="categories-layout">
-        <!-- Panel de Alta Técnica -->
         <div class="form-card">
             <h3>Nueva Categoría Operativa</h3>
 
@@ -40,8 +39,8 @@
 
                     <div class="form-group order-group">
                         <label for="cat-order">Orden</label>
-                        <input id="cat-order" type="number" min="1" [(ngModel)]="nuevaCategoria.displayOrder"
-                            name="displayOrder" />
+                        <input id="cat-order" type="number" min="1" [(ngModel)]="nuevaCategoria.sortOrder"
+                            name="sortOrder" />
                     </div>
                 </div>
 
@@ -49,7 +48,6 @@
             </form>
         </div>
 
-        <!-- Listado Pericial de Categorías -->
         <div class="table-card">
             <div class="table-top">
                 <h3>Categorías Vigentes ({{ categoriesService.categories().length }})</h3>
@@ -75,7 +73,7 @@
                         <td class="font-bold">{{ cat.name }}</td>
                         <td class="font-mono text-muted">{{ cat.slug }}</td>
                         <td class="font-mono text-uuid" [title]="cat.id">{{ cat.id.substring(0, 8) }}...</td>
-                        <td>#{{ cat.displayOrder }}</td>
+                        <td>#{{ cat.sortOrder }}</td>
                         <td>
                             <span class="status-pill" [class.active]="cat.isActive" [class.inactive]="!cat.isActive">
                                 {{ cat.isActive ? 'Activa' : 'Inactiva' }}

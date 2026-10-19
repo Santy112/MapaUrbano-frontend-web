@@ -24,7 +24,7 @@ jobs:
         run: npm ci
 
       - name: Run unit tests
-        run: npm test -- --watch=false --browsers=ChromeHeadless
+        run: npm test -- --watch=false
 
       - name: Build production
         run: npm run build -- --configuration production

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminAuditService } from '../../core/services/admin-audit.service';
+import { AdminAuditEntry } from '../../core/models/api.models';
 
 @Component({
   selector: 'app-audit',
@@ -12,8 +13,6 @@ import { AdminAuditService } from '../../core/services/admin-audit.service';
 })
 export class Audit implements OnInit {
   busqueda: string = '';
-  filtroModulo: string = 'Todos';
-  filtroAccion: string = 'Todas';
 
   constructor(public auditService: AdminAuditService) { }
 
@@ -21,15 +20,21 @@ export class Audit implements OnInit {
     this.cargarLogs();
   }
 
-  cargarLogs(): void {
-    this.auditService.getAuditLogs({
-      search: this.busqueda || undefined,
-      module: this.filtroModulo,
-      action: this.filtroAccion
-    }).subscribe();
+  cargarLogs(cursor?: string): void {
+    this.auditService.getAuditLogs(cursor).subscribe();
   }
 
-  onFiltroChange(): void {
-    this.cargarLogs();
+  get logsFiltrados(): AdminAuditEntry[] {
+    const term = this.busqueda.trim().toLowerCase();
+    const list = this.auditService.logs();
+    if (!term) {
+      return list;
+    }
+    return list.filter(item =>
+      item.details.toLowerCase().includes(term) ||
+      (item.actor && item.actor.toLowerCase().includes(term)) ||
+      item.module.toLowerCase().includes(term) ||
+      item.action.toLowerCase().includes(term)
+    );
   }
 }

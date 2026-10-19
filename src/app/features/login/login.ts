@@ -23,7 +23,7 @@ export class Login {
     ) { }
 
     onSubmit(): void {
-        if (!this.username || !this.password) {
+        if (!this.username.trim() || !this.password) {
             this.errorMessage = 'Por favor complete todos los campos requeridos.';
             return;
         }
@@ -31,7 +31,7 @@ export class Login {
         this.isSubmitting = true;
         this.errorMessage = '';
 
-        this.authService.login({ username: this.username, password: this.password }).subscribe({
+        this.authService.login({ username: this.username.trim(), password: this.password }).subscribe({
             next: () => {
                 this.isSubmitting = false;
                 this.router.navigate(['/']);
@@ -39,21 +39,11 @@ export class Login {
             error: (err) => {
                 this.isSubmitting = false;
                 if (err.status === 401) {
-                    this.errorMessage = 'Credenciales no autorizadas o incorrectas.';
+                    this.errorMessage = 'Credenciales no autorizadas o usuario/contraseña incorrectos.';
                 } else if (err.status === 403) {
-                    this.errorMessage = 'Acceso denegado: el usuario no posee rol administrativo.';
-                } else if (err.status === 501 || err.status === 0) {
-                    this.errorMessage = 'Servicio de autenticación en desarrollo en backend (simulando acceso local).';
-                    // Simulación temporal controlada si el backend aún no instaló cookies:
-                    this.authService.currentUser.set({
-                        id: 'mock-admin-uuid',
-                        username: this.username,
-                        fullName: 'Operador Técnico',
-                        role: 'ADMIN'
-                    });
-                    this.router.navigate(['/']);
+                    this.errorMessage = 'Acceso denegado: el usuario no posee rol de administrador.';
                 } else {
-                    this.errorMessage = 'Ocurrió un error inesperado al conectar con el servidor.';
+                    this.errorMessage = err.error?.message || 'Error de conexión con el servidor. Intente nuevamente.';
                 }
             }
         });

@@ -6,7 +6,7 @@
         </div>
         <div class="header-metric">
             <span class="metric-label">Registros</span>
-            <span class="metric-number">{{ auditService.logs().length }}</span>
+            <span class="metric-number">{{ auditService.totalCount() || auditService.logs().length }}</span>
         </div>
     </header>
 
@@ -17,35 +17,15 @@
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg>
-            <input type="text" placeholder="Buscar por detalle o actor..." [(ngModel)]="busqueda"
-                (keyup.enter)="cargarLogs()" />
-        </div>
-
-        <div class="filter-controls">
-            <div class="select-group">
-                <label>Módulo:</label>
-                <select [(ngModel)]="filtroModulo" (change)="onFiltroChange()">
-                    <option value="Todos">Todos</option>
-                    <option value="Reportes">Reportes</option>
-                    <option value="Categorías">Categorías</option>
-                    <option value="Sistema">Sistema</option>
-                </select>
-            </div>
-
-            <div class="select-group">
-                <label>Acción:</label>
-                <select [(ngModel)]="filtroAccion" (change)="onFiltroChange()">
-                    <option value="Todas">Todas</option>
-                    <option value="ESTADO">Estado</option>
-                    <option value="MODIFICAR">Modificación</option>
-                    <option value="CREAR">Creación</option>
-                    <option value="ELIMINAR">Baja</option>
-                </select>
-            </div>
+            <input type="text" placeholder="Filtrar por detalle o actor..." [(ngModel)]="busqueda" />
         </div>
     </div>
 
-    <div class="table-card">
+    <div class="state-indicator" *ngIf="auditService.isLoading()">
+        <p>Consultando bitácora pericial...</p>
+    </div>
+
+    <div class="table-card" *ngIf="!auditService.isLoading()">
         <table class="audit-table">
             <thead>
                 <tr>
@@ -59,13 +39,13 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let item of auditService.logs()">
-                    <td class="font-mono log-id">#{{ item.id }}</td>
+                <tr *ngFor="let item of logsFiltrados">
+                    <td class="font-mono log-id">#{{ item.id.substring(0, 8) }}</td>
                     <td class="time-col">{{ item.timestamp }}</td>
                     <td>
                         <div class="user-cell">
                             <span class="user-name">{{ item.actor || 'Sistema Automático' }}</span>
-                            <span class="user-role">{{ item.role || 'JOB_DAEMON' }}</span>
+                            <span class="user-role">{{ item.role || 'DAEMON' }}</span>
                         </div>
                     </td>
                     <td>
@@ -80,9 +60,9 @@
                     <td class="font-mono ip-col">{{ item.ip }}</td>
                 </tr>
 
-                <tr *ngIf="auditService.logs().length === 0">
+                <tr *ngIf="logsFiltrados.length === 0">
                     <td colspan="7" class="empty-state">
-                        No se encontraron eventos registrados con los criterios seleccionados.
+                        No se encontraron eventos registrados en el sistema.
                     </td>
                 </tr>
             </tbody>

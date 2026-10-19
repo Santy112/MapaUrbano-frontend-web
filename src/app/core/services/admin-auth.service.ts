@@ -1,8 +1,8 @@
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap, catchError, of } from 'rxjs';
+import { Observable, tap, catchError, of, throwError } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { AdminUser } from '../models/api.models';
+import { AdminUser, AdminAuthResponse } from '../models/api.models';
 
 @Injectable({
     providedIn: 'root'
@@ -10,31 +10,34 @@ import { AdminUser } from '../models/api.models';
 export class AdminAuthService {
     private readonly baseUrl = `${environment.apiUrl}/admin/auth`;
 
-    // Signals para manejar el estado reactivo sin tocar localStorage
     currentUser = signal<AdminUser | null>(null);
+    csrfToken = signal<string | null>(null);
     isLoading = signal<boolean>(true);
 
     constructor(private http: HttpClient) { }
 
-    // Consulta /me para recuperar la sesión existente por cookie
     checkSession(): Observable<AdminUser | null> {
         this.isLoading.set(true);
-        return this.http.get<AdminUser>(`${this.baseUrl}/me`, { withCredentials: true }).pipe(
-            tap(user => {
-                this.currentUser.set(user);
+        return this.http.get<AdminAuthResponse>(`${this.baseUrl}/me`, { withCredentials: true }).pipe(
+            tap(res => {
+                this.currentUser.set({ adminUserId: res.adminUserId, username: res.username });
+                this.csrfToken.set(res.csrfToken);
                 this.isLoading.set(false);
             }),
             catchError(() => {
-                this.currentUser.set(null);
+                this.clearSession();
                 this.isLoading.set(false);
                 return of(null);
             })
         );
     }
 
-    login(credentials: { username: string; password: string }): Observable<AdminUser> {
-        return this.http.post<AdminUser>(`${this.baseUrl}/login`, credentials, { withCredentials: true }).pipe(
-            tap(user => this.currentUser.set(user))
+    login(credentials: { username: string; password: string }): Observable<AdminAuthResponse> {
+        return this.http.post<AdminAuthResponse>(`${this.baseUrl}/login`, credentials, { withCredentials: true }).pipe(
+            tap(res => {
+                this.currentUser.set({ adminUserId: res.adminUserId, username: res.username });
+                this.csrfToken.set(res.csrfToken);
+            })
         );
     }
 
@@ -50,6 +53,7 @@ export class AdminAuthService {
 
     clearSession(): void {
         this.currentUser.set(null);
+        this.csrfToken.set(null);
     }
 
     isAuthenticated(): boolean {

@@ -16,7 +16,7 @@ export class Categories implements OnInit {
     name: '',
     slug: '',
     colorHex: '#2563eb',
-    displayOrder: 1,
+    sortOrder: 1,
     isActive: true
   };
 
@@ -56,20 +56,25 @@ export class Categories implements OnInit {
       name: this.nuevaCategoria.name,
       slug: this.nuevaCategoria.slug,
       colorHex: this.nuevaCategoria.colorHex,
-      displayOrder: Number(this.nuevaCategoria.displayOrder),
+      sortOrder: Number(this.nuevaCategoria.sortOrder),
       isActive: this.nuevaCategoria.isActive
-    }).subscribe(() => {
-      this.nuevaCategoria = {
-        name: '',
-        slug: '',
-        colorHex: '#2563eb',
-        displayOrder: this.categoriesService.categories().length + 1,
-        isActive: true
-      };
+    }).subscribe({
+      next: () => {
+        this.nuevaCategoria = {
+          name: '',
+          slug: '',
+          colorHex: '#2563eb',
+          sortOrder: this.categoriesService.categories().length + 1,
+          isActive: true
+        };
+      },
+      error: (err) => {
+        this.errorMensaje = err.error?.message || 'Error al crear la categoría.';
+      }
     });
   }
 
   toggleEstado(cat: AdminCategory): void {
-    this.categoriesService.toggleActive(cat.id, cat.isActive).subscribe();
+    this.categoriesService.updateCategory(cat.id, { isActive: !cat.isActive }).subscribe();
   }
 }

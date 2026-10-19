@@ -11,7 +11,6 @@
     </div>
 
     <div *ngIf="statsService.stats() as stats">
-        <!-- Métricas principales -->
         <div class="metrics-grid">
             <div class="metric-card">
                 <span class="card-label">Total de Reclamos</span>
@@ -21,62 +20,65 @@
 
             <div class="metric-card pending">
                 <span class="card-label">Pendientes</span>
-                <span class="card-value">{{ stats.byStatus.pending }}</span>
+                <span class="card-value">{{ stats.byStatus['pending'] || 0 }}</span>
                 <span class="card-hint">Requieren asignación</span>
             </div>
 
             <div class="metric-card in-progress">
                 <span class="card-label">En Proceso</span>
-                <span class="card-value">{{ stats.byStatus.inProgress }}</span>
+                <span class="card-value">{{ stats.byStatus['inProgress'] || 0 }}</span>
                 <span class="card-hint">Con cuadrilla en territorio</span>
             </div>
 
             <div class="metric-card resolved">
                 <span class="card-label">Resueltos</span>
-                <span class="card-value">{{ stats.byStatus.resolved }}</span>
+                <span class="card-value">{{ stats.byStatus['resolved'] || 0 }}</span>
                 <span class="card-hint">Inspección finalizada</span>
             </div>
         </div>
 
-        <!-- Gráficos de barras nativos y distribución -->
         <div class="details-grid">
             <div class="panel-card">
                 <h3>Distribución por Nivel de Criticidad</h3>
                 <div class="distribution-list">
                     <div class="dist-row">
-                        <span class="dist-name">Crítica</span>
+                        <span class="dist-name">Urgente</span>
                         <div class="bar-track">
                             <div class="bar-fill critical"
-                                [style.width.%]="(stats.byPriority.critical / stats.totalReports) * 100"></div>
+                                [style.width.%]="stats.totalReports ? ((stats.byPriority['urgent'] || 0) / stats.totalReports) * 100 : 0">
+                            </div>
                         </div>
-                        <span class="dist-count">{{ stats.byPriority.critical }}</span>
+                        <span class="dist-count">{{ stats.byPriority['urgent'] || 0 }}</span>
                     </div>
 
                     <div class="dist-row">
                         <span class="dist-name">Alta</span>
                         <div class="bar-track">
                             <div class="bar-fill high"
-                                [style.width.%]="(stats.byPriority.high / stats.totalReports) * 100"></div>
+                                [style.width.%]="stats.totalReports ? ((stats.byPriority['high'] || 0) / stats.totalReports) * 100 : 0">
+                            </div>
                         </div>
-                        <span class="dist-count">{{ stats.byPriority.high }}</span>
+                        <span class="dist-count">{{ stats.byPriority['high'] || 0 }}</span>
                     </div>
 
                     <div class="dist-row">
                         <span class="dist-name">Media</span>
                         <div class="bar-track">
                             <div class="bar-fill medium"
-                                [style.width.%]="(stats.byPriority.medium / stats.totalReports) * 100"></div>
+                                [style.width.%]="stats.totalReports ? ((stats.byPriority['medium'] || 0) / stats.totalReports) * 100 : 0">
+                            </div>
                         </div>
-                        <span class="dist-count">{{ stats.byPriority.medium }}</span>
+                        <span class="dist-count">{{ stats.byPriority['medium'] || 0 }}</span>
                     </div>
 
                     <div class="dist-row">
                         <span class="dist-name">Baja</span>
                         <div class="bar-track">
                             <div class="bar-fill low"
-                                [style.width.%]="(stats.byPriority.low / stats.totalReports) * 100"></div>
+                                [style.width.%]="stats.totalReports ? ((stats.byPriority['low'] || 0) / stats.totalReports) * 100 : 0">
+                            </div>
                         </div>
-                        <span class="dist-count">{{ stats.byPriority.low }}</span>
+                        <span class="dist-count">{{ stats.byPriority['low'] || 0 }}</span>
                     </div>
                 </div>
             </div>
@@ -84,12 +86,14 @@
             <div class="panel-card">
                 <h3>Incidencia por Área de Servicio</h3>
                 <div class="distribution-list">
-                    <div class="dist-row" *ngFor="let cat of stats.byCategory">
-                        <span class="dist-name">{{ cat.name }}</span>
+                    <div class="dist-row" *ngFor="let item of stats.byCategory | keyvalue">
+                        <span class="dist-name">{{ item.key }}</span>
                         <div class="bar-track">
-                            <div class="bar-fill default" [style.width.%]="cat.percentage"></div>
+                            <div class="bar-fill default"
+                                [style.width.%]="stats.totalReports ? (item.value / stats.totalReports) * 100 : 0">
+                            </div>
                         </div>
-                        <span class="dist-count">{{ cat.count }} ({{ cat.percentage }}%)</span>
+                        <span class="dist-count">{{ item.value }}</span>
                     </div>
                 </div>
             </div>

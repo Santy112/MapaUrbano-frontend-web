@@ -6,7 +6,6 @@
         </div>
     </header>
 
-    <!-- Banner de error o conflicto de concurrencia (HTTP 409) -->
     <div class="alert-conflict" *ngIf="conflictError">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"></circle>
@@ -16,7 +15,6 @@
         <span>{{ conflictError }}</span>
     </div>
 
-    <!-- Filtros superiores -->
     <div class="filter-bar">
         <div class="search-box">
             <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -29,7 +27,7 @@
 
         <div class="status-filters">
             <button [class.active]="filtroEstado === 'Todos'" (click)="onFiltroEstadoChange('Todos')">Todos ({{
-                reportsService.totalReports() }})</button>
+                reportsService.totalCount() }})</button>
             <button [class.active]="filtroEstado === 'PENDING'"
                 (click)="onFiltroEstadoChange('PENDING')">Pendientes</button>
             <button [class.active]="filtroEstado === 'IN_PROGRESS'" (click)="onFiltroEstadoChange('IN_PROGRESS')">En
@@ -39,30 +37,25 @@
         </div>
     </div>
 
-    <!-- Estado de carga -->
     <div class="state-indicator" *ngIf="reportsService.isLoading()">
         <p>Consultando registros periciales en el servidor...</p>
     </div>
 
-    <!-- Grilla de Fichas de Relevamiento Urbano -->
     <div class="reports-grid" *ngIf="!reportsService.isLoading()">
         <div class="report-dossier" *ngFor="let rep of reportsService.reports()">
 
-            <!-- Encabezado técnico -->
             <div class="dossier-top">
-                <span class="dossier-id">ACTA #{{ rep.id }} &bull; v{{ rep.version }}</span>
+                <span class="dossier-id">ACTA #{{ rep.id.substring(0, 8) }} &bull; v{{ rep.version }}</span>
                 <span class="dossier-status" [ngClass]="rep.status.toLowerCase().replace('_', '-')">
                     {{ rep.status }}
                 </span>
             </div>
 
-            <!-- Evidencia fotográfica en formato cuadrado 1:1 -->
             <div class="evidence-frame" (click)="verDetalle(rep)">
                 <img [src]="rep.imageUrl || '/bache.jpg'" [alt]="rep.title" loading="lazy" />
                 <span class="inspect-label">Ver registro completo</span>
             </div>
 
-            <!-- Datos técnicos estructurados debajo -->
             <div class="dossier-content">
                 <h3 class="incident-title" (click)="verDetalle(rep)">{{ rep.title }}</h3>
 
@@ -83,33 +76,29 @@
 
                 <p class="incident-notes">{{ rep.description }}</p>
 
-                <!-- Control de derivación y cambio de estado -->
                 <div class="dossier-footer">
                     <span class="action-desc">Estado operativo:</span>
                     <select [ngModel]="rep.status" (ngModelChange)="cambiarEstado(rep, $event)">
                         <option value="PENDING">PENDING</option>
                         <option value="IN_PROGRESS">IN_PROGRESS</option>
                         <option value="RESOLVED">RESOLVED</option>
-                        <option value="REJECTED">REJECTED</option>
                     </select>
                 </div>
             </div>
 
         </div>
 
-        <!-- Estado vacío -->
         <div class="empty-dossier" *ngIf="reportsService.reports().length === 0">
             <p>No se encontraron actas con los filtros especificados.</p>
         </div>
     </div>
 
-    <!-- Modal pericial ampliado -->
     <div class="modal-overlay" *ngIf="reporteSeleccionado" (click)="cerrarDetalle()">
         <div class="modal-box" (click)="$event.stopPropagation()">
             <div class="modal-header">
                 <div>
-                    <span class="modal-code">EXPEDIENTE N° {{ reporteSeleccionado.id }} (v{{ reporteSeleccionado.version
-                        }})</span>
+                    <span class="modal-code">EXPEDIENTE N° {{ reporteSeleccionado.id.substring(0, 8) }} (v{{
+                        reporteSeleccionado.version }})</span>
                     <h3>{{ reporteSeleccionado.title }}</h3>
                 </div>
                 <button class="btn-close" (click)="cerrarDetalle()">✕</button>
@@ -122,3 +111,39 @@
                 <div class="modal-details">
                     <p><strong>Ubicación:</strong> {{ reporteSeleccionado.address || (reporteSeleccionado.latitude + ',
                         ' + reporteSeleccionado.longitude) }}</p>
+                    <p><strong>Área técnica:</strong> {{ reporteSeleccionado.categorySlug }}</p>
+                    <p><strong>Prioridad:</strong> {{ reporteSeleccionado.priority }}</p>
+                    <p><strong>Fecha de alta:</strong> {{ reporteSeleccionado.createdAt }}</p>
+                    <p><strong>Estado:</strong>
+                        <span class="dossier-status"
+                            [ngClass]="reporteSeleccionado.status.toLowerCase().replace('_', '-')">
+                            {{ reporteSeleccionado.status }}
+                        </span>
+                    </p>
+
+                    <div class="info-item">
+                        <strong>Cuadrilla Operativa:</strong>
+                        <select [ngModel]="reporteSeleccionado.assignedTeamId"
+                            (ngModelChange)="asignarEquipo(reporteSeleccionado, $event)" class="select-team">
+                            <option value="">Sin cuadrilla asignada</option>
+                            <option *ngFor="let team of teamsService.teams()" [value]="team.id">
+                                {{ team.name }} ({{ team.specialty }})
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="report-notes-box">
+                        <strong>Descripción pericial:</strong>
+                        <p>{{ reporteSeleccionado.description }}</p>
+                    </div>
+
+                    <div class="modal-actions-footer">
+                        <button type="button" class="btn-delete" (click)="eliminarReporte(reporteSeleccionado.id)">
+                            Dar de baja expediente
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
