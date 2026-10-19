@@ -41,6 +41,13 @@ export class Dashboard implements AfterViewInit, OnDestroy {
       this.map.resize();
       this.cargarMarcadoresReales();
     });
+
+    // Respaldo por si el contenedor termina de expandirse milisegundos después
+    setTimeout(() => {
+      if (this.map) {
+        this.map.resize();
+      }
+    }, 300);
   }
 
   private cargarMarcadoresReales(): void {
