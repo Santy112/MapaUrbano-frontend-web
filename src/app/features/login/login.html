@@ -1,36 +1,147 @@
-<div class="login-wrapper">
-    <div class="login-card">
-        <div class="login-header">
-            <div class="logo-badge">MU</div>
-            <h2>Mapa Urbano</h2>
-            <p class="subtitle">Acceso Administrativo y Operativo</p>
+<div class="login-page">
+    <!-- Barra de navegación superior -->
+    <header class="top-header">
+        <div class="brand-group">
+            <div class="mu-badge">MU</div>
+            <div class="brand-text">
+                <span class="brand-title">Mapa Urbano</span>
+                <span class="brand-sub">Acceso Administrativo y Operativo</span>
+            </div>
         </div>
 
-        <form (ngSubmit)="onSubmit()" class="login-form">
-            <div class="form-group">
-                <label for="username">Usuario u Operador</label>
-                <input id="username" type="text" name="username" [(ngModel)]="username" placeholder="Ej: s.zuleta"
-                    autocomplete="username" required />
-            </div>
-
-            <div class="form-group">
-                <label for="password">Contraseña</label>
-                <input id="password" type="password" name="password" [(ngModel)]="password" placeholder="••••••••"
-                    autocomplete="current-password" required />
-            </div>
-
-            <div class="alert-error" *ngIf="errorMessage">
-                {{ errorMessage }}
-            </div>
-
-            <button type="submit" class="btn-submit" [disabled]="isSubmitting">
-                <span *ngIf="!isSubmitting">Iniciar Sesión</span>
-                <span *ngIf="isSubmitting">Verificando credenciales...</span>
+        <div class="header-actions">
+            <button type="button" class="action-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path
+                        d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                    </path>
+                </svg>
+                <span>ES</span>
             </button>
-        </form>
 
-        <div class="login-footer">
-            <small>Sistema de gestión municipal &bull; Sesión protegida por cookie</small>
+            <button type="button" class="action-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+                <span>Ayuda</span>
+            </button>
         </div>
-    </div>
+    </header>
+
+    <!-- Contenedor central -->
+    <main class="main-container">
+        <div class="login-card">
+
+            <!-- Encabezado interior de la tarjeta -->
+            <div class="card-brand">
+                <div class="mu-badge sm">MU</div>
+                <div class="brand-text">
+                    <span class="card-brand-title">Mapa Urbano</span>
+                    <span class="card-brand-sub">Acceso Administrativo y Operativo</span>
+                </div>
+            </div>
+
+            <h2 class="card-title">Iniciar sesión</h2>
+
+            <form (ngSubmit)="onSubmit()" class="login-form">
+                <!-- Campo Usuario -->
+                <div class="field-block">
+                    <label for="username">Nombre de usuario</label>
+                    <div class="input-container">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <input id="username" type="text" name="username" [(ngModel)]="username"
+                            placeholder="Ingresa tu nombre de usuario" autocomplete="username" required />
+                    </div>
+                </div>
+
+                <!-- Campo Contraseña -->
+                <div class="field-block">
+                    <label for="password">Contraseña</label>
+                    <div class="input-container">
+                        <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        <input id="password" [type]="showPassword ? 'text' : 'password'" name="password"
+                            [(ngModel)]="password" placeholder="••••••••••••" autocomplete="current-password"
+                            required />
+                        <button type="button" class="eye-toggle" (click)="togglePasswordVisibility()">
+                            <svg *ngIf="!showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                            <svg *ngIf="showPassword" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path
+                                    d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24">
+                                </path>
+                                <line x1="1" y1="1" x2="23" y2="23"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="error-banner" *ngIf="errorMessage">
+                    {{ errorMessage }}
+                </div>
+
+                <button type="submit" class="submit-btn" [disabled]="isSubmitting">
+                    <span>{{ isSubmitting ? 'Verificando...' : 'Acceder a la plataforma' }}</span>
+                    <svg *ngIf="!isSubmitting" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <!-- Metadatos de seguridad y cifrado -->
+        <section class="security-meta">
+            <div class="security-tags">
+                <span class="sec-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    Cifrado TLS 1.3 / AES-256
+                </span>
+                <span class="sec-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                        <line x1="8" y1="21" x2="16" y2="21"></line>
+                        <line x1="12" y1="17" x2="12" y2="21"></line>
+                    </svg>
+                    Nodo Certificado ISO/IEC 27001
+                </span>
+                <span class="sec-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    </svg>
+                    Esquema Nacional de Seguridad (ENS)
+                </span>
+            </div>
+            <p class="sec-session">ID de sesión segura: SEC-9941-ESP-A &bull; Latencia de pasarela: 14ms</p>
+        </section>
+    </main>
+
+    <!-- Pie de página institucional -->
+    <footer class="bottom-footer">
+        <div class="footer-left">
+            <span>&copy; 2025 Mapa Urbano. Sistema de gestión municipal. Todos los derechos reservados.</span>
+        </div>
+        <nav class="footer-right">
+            <a href="javascript:void(0)">Términos de servicio</a>
+            <a href="javascript:void(0)">Privacidad</a>
+            <a href="javascript:void(0)">Soporte técnico</a>
+            <a href="javascript:void(0)">Estado del sistema</a>
+        </nav>
+    </footer>
 </div>

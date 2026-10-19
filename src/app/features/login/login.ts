@@ -14,6 +14,7 @@ import { AdminAuthService } from '../../core/services/admin-auth.service';
 export class Login {
     username = '';
     password = '';
+    showPassword = false;
     errorMessage = '';
     isSubmitting = false;
 
@@ -21,6 +22,10 @@ export class Login {
         private authService: AdminAuthService,
         private router: Router
     ) { }
+
+    togglePasswordVisibility(): void {
+        this.showPassword = !this.showPassword;
+    }
 
     onSubmit(): void {
         if (!this.username.trim() || !this.password) {
@@ -39,9 +44,9 @@ export class Login {
             error: (err) => {
                 this.isSubmitting = false;
                 if (err.status === 401) {
-                    this.errorMessage = 'Credenciales no autorizadas o usuario/contraseña incorrectos.';
+                    this.errorMessage = 'Credenciales no autorizadas o datos incorrectos.';
                 } else if (err.status === 403) {
-                    this.errorMessage = 'Acceso denegado: el usuario no posee rol de administrador.';
+                    this.errorMessage = 'Acceso denegado: el usuario no posee rol administrativo.';
                 } else {
                     this.errorMessage = err.error?.message || 'Error de conexión con el servidor. Intente nuevamente.';
                 }
