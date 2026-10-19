@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -20,7 +20,8 @@ export class Login {
 
     constructor(
         private authService: AdminAuthService,
-        private router: Router
+        private router: Router,
+        private cdr: ChangeDetectorRef
     ) { }
 
     togglePasswordVisibility(): void {
@@ -39,17 +40,23 @@ export class Login {
         this.authService.login({ username: this.username.trim(), password: this.password }).subscribe({
             next: () => {
                 this.isSubmitting = false;
+                this.cdr.detectChanges();
                 this.router.navigate(['/']);
             },
             error: (err) => {
                 this.isSubmitting = false;
+
                 if (err.status === 401) {
-                    this.errorMessage = 'Credenciales no autorizadas o datos incorrectos.';
+                    this.errorMessage = 'Credenciales no autorizadas o usuario/contraseña incorrectos.';
                 } else if (err.status === 403) {
-                    this.errorMessage = 'Acceso denegado: el usuario no posee rol administrativo.';
+                    this.errorMessage = 'Acceso denegado: el usuario no posee rol de administrador.';
+                } else if (err.status === 0 || err.status === 504) {
+                    this.errorMessage = 'Servidor inaccesible (puerto 8080 desconectado o sin red). Verifique que Ktor esté corriendo.';
                 } else {
-                    this.errorMessage = err.error?.message || 'Error de conexión con el servidor. Intente nuevamente.';
+                    this.errorMessage = err.error?.message || 'Error al conectar con el servidor. Intente nuevamente.';
                 }
+
+                this.cdr.detectChanges();
             }
         });
     }
